@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Trash2, CheckCircle, Circle } from "lucide-react";
+import { Loader2, Trash2, CheckCircle, Circle, LogOut } from "lucide-react";
 
 interface Todo {
   id: string;
@@ -59,8 +59,8 @@ const Index = () => {
       console.error("Error fetching todos:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Could not fetch todos",
+        title: "خطأ",
+        description: "لم نتمكن من جلب المهام",
       });
     } finally {
       setLoading(false);
@@ -81,15 +81,15 @@ const Index = () => {
       setNewTodo("");
       fetchTodos();
       toast({
-        title: "Success",
-        description: "Todo added successfully",
+        title: "تم",
+        description: "تمت إضافة المهمة بنجاح",
       });
     } catch (error) {
       console.error("Error adding todo:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Could not add todo",
+        title: "خطأ",
+        description: "لم نتمكن من إضافة المهمة",
       });
     }
   };
@@ -110,8 +110,8 @@ const Index = () => {
       console.error("Error toggling todo:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Could not update todo",
+        title: "خطأ",
+        description: "لم نتمكن من تحديث المهمة",
       });
     }
   };
@@ -124,15 +124,29 @@ const Index = () => {
 
       setTodos(todos.filter((todo) => todo.id !== id));
       toast({
-        title: "Success",
-        description: "Todo deleted successfully",
+        title: "تم",
+        description: "تم حذف المهمة بنجاح",
       });
     } catch (error) {
       console.error("Error deleting todo:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Could not delete todo",
+        title: "خطأ",
+        description: "لم نتمكن من حذف المهمة",
+      });
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast({
+        variant: "destructive",
+        title: "خطأ",
+        description: "حدث خطأ أثناء تسجيل الخروج",
       });
     }
   };
@@ -145,17 +159,27 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-2xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Todo List</h1>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900">قائمة المهام</h1>
+            <Button
+              variant="ghost"
+              onClick={handleSignOut}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              <LogOut className="h-5 w-5" />
+              <span className="mr-2">تسجيل الخروج</span>
+            </Button>
+          </div>
           
-          <form onSubmit={addTodo} className="flex gap-2 mb-6">
+          <form onSubmit={addTodo} className="flex gap-2 mb-6" dir="rtl">
             <Input
               type="text"
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
-              placeholder="Add a new todo..."
+              placeholder="أضف مهمة جديدة..."
               className="flex-1"
             />
-            <Button type="submit">Add Todo</Button>
+            <Button type="submit">إضافة</Button>
           </form>
 
           {loading ? (
@@ -163,9 +187,9 @@ const Index = () => {
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
           ) : todos.length === 0 ? (
-            <p className="text-center text-gray-500 py-4">No todos yet. Add one above!</p>
+            <p className="text-center text-gray-500 py-4">لا توجد مهام بعد. أضف مهمة جديدة!</p>
           ) : (
-            <ul className="space-y-3">
+            <ul className="space-y-3" dir="rtl">
               {todos.map((todo) => (
                 <li
                   key={todo.id}
