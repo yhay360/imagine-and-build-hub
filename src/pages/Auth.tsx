@@ -43,6 +43,49 @@ const Auth = () => {
                 },
               },
             },
+            style: {
+              button: {
+                borderRadius: '6px',
+                height: '40px',
+              },
+              input: {
+                borderRadius: '6px',
+                height: '40px',
+              },
+              anchor: {
+                color: '#404040',
+              },
+              message: {
+                borderRadius: '6px',
+              },
+            },
+          }}
+          localization={{
+            variables: {
+              sign_in: {
+                email_label: 'البريد الإلكتروني',
+                password_label: 'كلمة المرور',
+                button_label: 'تسجيل الدخول',
+                loading_button_label: 'جاري تسجيل الدخول...',
+                link_text: 'لديك حساب بالفعل؟ تسجيل الدخول',
+              },
+              sign_up: {
+                email_label: 'البريد الإلكتروني',
+                password_label: 'كلمة المرور',
+                button_label: 'إنشاء حساب',
+                loading_button_label: 'جاري إنشاء الحساب...',
+                link_text: 'ليس لديك حساب؟ إنشاء حساب جديد',
+              },
+              magic_link: {
+                button_label: 'إرسال رابط السحري',
+                loading_button_label: 'جاري إرسال الرابط...',
+              },
+              forgotten_password: {
+                button_label: 'إرسال تعليمات إعادة تعيين كلمة المرور',
+                loading_button_label: 'جاري الإرسال...',
+                link_text: 'نسيت كلمة المرور؟',
+              },
+            },
           }}
           providers={[]}
         />
