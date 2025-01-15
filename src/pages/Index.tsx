@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Trash2, CheckCircle, Circle, LogOut } from "lucide-react";
+import { Loader2, Trash2, CheckCircle, Circle } from "lucide-react";
 
 interface Todo {
   id: string;
@@ -16,35 +15,7 @@ const Index = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
   const [loading, setLoading] = useState(true);
-  const [session, setSession] = useState<any>(null);
-  const navigate = useNavigate();
   const { toast } = useToast();
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (!session) {
-        navigate("/auth");
-      }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (!session) {
-        navigate("/auth");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  useEffect(() => {
-    if (session) {
-      fetchTodos();
-    }
-  }, [session]);
 
   const fetchTodos = async () => {
     try {
@@ -74,7 +45,7 @@ const Index = () => {
     try {
       const { error } = await supabase
         .from("todos")
-        .insert([{ title: newTodo.trim(), user_id: session.user.id }]);
+        .insert([{ title: newTodo.trim() }]);
 
       if (error) throw error;
 
@@ -137,38 +108,12 @@ const Index = () => {
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-    } catch (error) {
-      console.error("Error signing out:", error);
-      toast({
-        variant: "destructive",
-        title: "خطأ",
-        description: "حدث خطأ أثناء تسجيل الخروج",
-      });
-    }
-  };
-
-  if (!session) {
-    return null;
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-2xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900">قائمة المهام</h1>
-            <Button
-              variant="ghost"
-              onClick={handleSignOut}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              <LogOut className="h-5 w-5" />
-              <span className="mr-2">تسجيل الخروج</span>
-            </Button>
           </div>
           
           <form onSubmit={addTodo} className="flex gap-2 mb-6" dir="rtl">
